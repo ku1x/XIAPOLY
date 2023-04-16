@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>滑动条</title>
+    <style type="text/css">
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .box {
+            width: 400px;
+            height: 10px;
+            position: relative;
+            left: 0px;
+            top: 0px;
+            background-color: #ccc;
+            margin: 100px auto;
+        }
+
+        .box .box2 {
+            width: 10px;
+            height: 20px;
+            background-color: #369;
+            position: absolute;
+            left: 0px;
+            top: -5px;
+            cursor: pointer;
+            /*cursor: default;*/
+        }
+
+        .box .cover {
+            width: 0px;
+            height: 10px;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            background-color: #369;
+
+        }
+    </style>
+    <script type="text/javascript">
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+         var t;
+         var l;
+        window.onload = function () {
+            $("2box").onmousedown = function (event) {
+                var evt = event || window.event;
+                var left1 = evt.clientX - $("2box").offsetLeft;//长条方块的左边框的距离+鼠标距小蓝色方块的左边框的距离；
+                document.onmousemove = function (event) {
+                    var evt = event || window.event;
+                    var location = evt.clientX - left1;
+                    if (location < 0) {
+                        location = 0;
+                    } else if (location > 390) {
+                        location = 390;
+                    }
+                    $("2box").style.left = location + "px";
+                    $("cover1").style.width = location + "px";
+                    console.log("move");
+                    l = location;
+                };
+                document.onmouseup = function () {
+                    document.onmousemove = null;//取消注册的onmousemove事件;
+                    
+                    var httpRequest= new XMLHttpRequest();
+                    httpRequest.open("GET","http://localhost:3000/api3?time="+Math.ceil((390 - l) / 50) ,true);
+                    httpRequest.send();
+                    t = setInterval('blink()', Math.ceil((390 - l) / 50) * 200);
+                }
+            }
+        };
+
+        function blink() {
+            var a = document.getElementById("img");
+            a.style.visibility = "visible";
+            window.setTimeout(function(){
+                a.style.visibility = "hidden";
+            },1000);
+        }
+
+    </script>
+</head>
+<body>
+<div style="height: 300px;width: 200px;background: #336699;" id="img">
+
+</div>
+<div class="box" id="1box">
+    <div class="box2" id="2box"></div>
+    <div class="cover" id="cover1"></div>
+</div>
+</body>
+</html>

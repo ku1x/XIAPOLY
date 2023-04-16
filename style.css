@@ -1,0 +1,25 @@
+@font-face {
+    font-family: 'TimesNewArialGX';
+    src: url('./TimesNewArialGX.ttf') format('truetype-variations');
+  }
+
+  body {
+    --base-font-size: 16px;
+    font-size: max(2.8lvh, var(--base-font-size));
+    line-height: 1.3em;
+    font-family: "TimesNewArial";
+    font-variation-settings: "ital" -100, "srff" 10;
+    text-rendering: optimizeLegibility;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+  }
+ 
+  *{
+    margin: 0px;
+    padding: 0px;
+  }
+
+  
+  
+  
+    

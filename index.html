@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Polytope XIa</title>
+  <meta name="viewport" content="width=device-width">
+  
+  <!--<style>
+   @font-face {
+    font-family: 'TimesNewArialGX';
+    src: url('./TimesNewArialGX.ttf') format('truetype-variations');
+  }
+
+  body {
+    --base-font-size: 16px;
+    font-size: max(2.8lvh, var(--base-font-size));
+    line-height: 1.3em;
+    font-family: "TimesNewArial";
+    font-variation-settings: "ital" -100, "srff" 10;
+    text-rendering: optimizeLegibility;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+  }
+  </style>-->
+  <link rel="stylesheet" href="./style.css">
+  
+</head>
+
+<body>
+  <div id="bg" style="height: 100vh; width: 100vw">
+  <div id="content">
+    <h2>Polytope XIa</h2>
+    <h2> <span id="title">title</span></h2>
+      <h2> <span id="artist">artist</span></h2>
+        <h2> <span id="status">Disconnected</span></h2>
+        <!-- <h2>Messages:</h2>
+        <ul id="messages"></ul> -->
+  </div>
+  <div class="footer">
+    <div class="zigzag"></div>
+  </div>
+  </div>
+  
+</body>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const status = document.getElementById('status');
+    const messages = document.getElementById('messages');
+
+    
+    const title = document.querySelector("#title");
+    const artist = document.querySelector("#artist");
+    
+    /*
+    const appendMessage = (content) => {
+      const item = document.createElement('li');
+      item.textContent = content;
+      messages.appendChild(item);
+    };*/
+
+    const socket = io({
+      // Socket.IO options
+    });
+
+    socket.on('connect', () => {
+      status.innerText = 'Connected';
+      //appendMessage(`status: connected`);
+    });
+  /*
+    socket.on('connect_error', (err) => {
+      appendMessage(`event: connect_error | reason: ${err.message}`);
+    });
+
+    socket.on('disconnect', (reason) => {
+      status.innerText = 'Disconnected';
+      appendMessage(`event: disconnect | reason: ${reason}`);
+    }); */
+
+
+
+
+    let time = 0;
+    let color = 'white'; // blinking color not set yet
+    let intervalTime ;
+    let currentTime = intervalTime;
+    const bg = document.getElementById('bg');
+    bg.style.backgroundColor = color;
+    let t;
+    let isBgBlack = false;
+    
+    // blink function -> duration of black bgc is the same as white 
+    const blink = () => { 
+      bg.style.backgroundColor = 'black';
+      clearInterval(t);
+      isBgBlack = true;
+      t = setInterval(() => {
+        if (isBgBlack) {
+          bg.style.backgroundColor = color;
+        } else {
+          bg.style.backgroundColor = 'black';
+        }
+        isBgBlack = !isBgBlack;
+        console.log(currentTime/2);
+        console.log(color);
+      }, currentTime/2); 
+      setTimeout(() => {
+        clearInterval(t);
+        blink();
+        intervalTime = currentTime;
+        currentTime = time;
+      }, intervalTime);
+    }
+
+
+    //while intensity == 0 then all blackout
+    //while intensity > 20s then all white
+    if(time==0){
+      bg.style.backgroundColor = 'black';
+    }else if(time>40000){
+      bg.style.backgroundColor = 'white';
+    }else blink();
+
+    // broadcasting osc signal
+    socket.on('osc', (oscSig) => {
+      time = oscSig.intensity; // time intensity
+      //color = oscSig.colour; // color colour
+    });
+    
+    setInterval(() => {
+      if (currentTime !== time) {
+        currentTime = time;
+      }
+    }, intervalTime);
+    
+
+    //change text in the page from 
+    socket.on('text', (msg) => {
+      title.innerHTML = msg.title;
+      artist.textContent = msg.detail;
+    })
+  </script>
+</html>

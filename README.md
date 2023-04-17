@@ -2,6 +2,8 @@
 OSCWEB-BROADCAST
 
 node_modules:
+ 
+ 
  node-starter@0.0.1 D:\DE\SOSI22\XIa\phone-kui\phone-kui\polytopeXIa
 ├── express@4.18.1
 └── socket.io@4.1.3
@@ -9,9 +11,15 @@ node_modules:
 Web OSC documentation :
 
 Ip: unknown
-Port: 8001
 
-Signals:
+OSC-Port: 8001
+
+web-broadcastport: 3000/xia
+
+
+
+Signals paths:
+
 1.Scene/Stage - Flag
     Path: ./scene <int>
 

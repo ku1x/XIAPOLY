@@ -4,26 +4,37 @@
   <meta charset="UTF-8" />
   <title>Polytope XIa</title>
   <meta name="viewport" content="width=device-width">
-  
-  <!--<style>
-   @font-face {
-    font-family: 'TimesNewArialGX';
-    src: url('./TimesNewArialGX.ttf') format('truetype-variations');
-  }
+  <!--<link rel="stylesheet" type="text/css" href="style.css"> -->
+  <style>
+ 
 
-  body {
-    --base-font-size: 16px;
-    font-size: max(2.8lvh, var(--base-font-size));
-    line-height: 1.3em;
-    font-family: "TimesNewArial";
-    font-variation-settings: "ital" -100, "srff" 10;
-    text-rendering: optimizeLegibility;
-    font-smooth: never;
-    -webkit-font-smoothing: none;
-  }
-  </style>-->
-  <link rel="stylesheet" href="./style.css">
-  
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+h2 {
+  font-size: 1.2em;
+  white-space: nowrap;
+}
+
+
+h2 span {
+  white-space: nowrap;
+  display: inline-block;
+}
+
+  #content h1::after,
+  #content h2::after {
+  content: "";
+  display: block;
+  height: 2px;
+  background-color: black;
+  margin-top: 5px;
+}
+
+
+  </style>
 </head>
 
 <body>
@@ -52,12 +63,7 @@
     const title = document.querySelector("#title");
     const artist = document.querySelector("#artist");
     
-    /*
-    const appendMessage = (content) => {
-      const item = document.createElement('li');
-      item.textContent = content;
-      messages.appendChild(item);
-    };*/
+
 
     const socket = io({
       // Socket.IO options
@@ -81,7 +87,7 @@
 
 
     let time = 1000;
-    let color = 'white'; // blinking color not set yet
+    var color = 'white' ;
     let intervalTime ;
     let currentTime = intervalTime;
     const bg = document.getElementById('bg');
@@ -89,8 +95,7 @@
     let t;
     let isBgBlack = false;
     
-    // blink function -> duration of black bgc is the same as white 
-    const blink = () => { 
+    const blink = () => { // 修改intervalTime的初始值
       bg.style.backgroundColor = 'black';
       clearInterval(t);
       isBgBlack = true;
@@ -112,19 +117,17 @@
       }, intervalTime);
     }
 
-
-    //while intensity == 0 then all blackout
-    //while intensity > 20s then all white
+    
     if(time==0){
       bg.style.backgroundColor = 'black';
-    }else if(time>40000){
+    }else if(time>=5000){
       bg.style.backgroundColor = 'white';
     }else blink();
+    
 
-    // broadcasting osc signal
     socket.on('osc', (oscSig) => {
-      time = oscSig.intensity; // time intensity
-      //color = oscSig.colour; // color colour
+      time = oscSig.intensity;
+      //color = oscSig.colour;
     });
     
     setInterval(() => {
@@ -134,8 +137,8 @@
     }, intervalTime);
     
 
-    //change text in the page from 
     socket.on('text', (msg) => {
+      //const mytext = document.getElementById('mytext');
       title.innerHTML = msg.title;
       artist.textContent = msg.detail;
     })

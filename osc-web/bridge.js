@@ -9,7 +9,7 @@ var oscServer, oscClient;
 io.on('connection', function (socket) {
   socket.on('config', function (obj) {
     console.log('config', obj);
-    oscServer = new osc.Server(8001, "10.0.100.10");
+    oscServer = new osc.Server(8001, "10.0.100.3");
     oscClient = new osc.Client(obj.client.host, obj.client.port);
 
     oscClient.send('/status', socket.id + ' connected');

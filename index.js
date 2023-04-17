@@ -17,22 +17,18 @@ const httpServer = createServer((req, res) => {
 
   var urlStr = url.parse(req.url);
   
-    // request page 
-      if (req.method == "GET" && req.url == "/xia") {
-        res.writeHead(200, { "content-type": "text/html" });
-        require("fs").createReadStream("./index.html").pipe(res);
-        console.log("open index.html");
-    }
-    // further req for other source such as .css .img 
-      else if (req.method == "GET" ) {
-        res.writeHead(200);
-        require("fs").createReadStream('./style.css').pipe(res);
-        require("fs").createReadStream('./TimesNewArialGX.ttf').pipe(res);// not getting ttf
-        console.log("get"+'./TimesNewArialGX.ttf');
-    }
-  
-  // slider texting with demo
-  /* if (urlStr.pathname == '/api2') {
+  if (urlStr.pathname == '/xia') {
+    // reload the file every time
+    const content = readFileSync('index.html');
+    const length = Buffer.byteLength(content);
+  res.writeHead(200, {
+    'Content-Type': 'text/html',
+    'Content-Length': length,
+  });
+
+  res.end(content);
+  } 
+  if (urlStr.pathname == '/api2') {
     const content = readFileSync('demo.html');
     const length = Buffer.byteLength(content);
 
@@ -66,23 +62,29 @@ const httpServer = createServer((req, res) => {
     res.writeHead(200,{'Content-Type':'text/plain'})
     res.write("recv");
     res.end();
-  }*/
-  
-  //localhost:3000/osc
-   if (urlStr.pathname == '/osc') {
+  }
+    
+  if (urlStr.pathname == '/api4') {
     const content = readFileSync(process.cwd() +'/osc-web/web-side/app.html');
     const length = Buffer.byteLength(content);
+
     res.writeHead(200, {
       'Content-Type': 'text/html',
       'Content-Length': length,
     });
     res.end(content);
   }
-  if (urlStr.pathname == '/getOsc') {
-    // recieve whole property as object
-    const oscCon = urlStr.query.split('=')[1]; 
-    //dealing osc signal from oscapp
-    if(oscCon.includes("scene")){
+  if (urlStr.pathname == '/api5') {
+    // reload the file every time
+    // 接收闪烁频率参数 time
+
+    
+    const oscCon = urlStr.query.split('=')[1]; // recieve whole property as object
+    
+  
+
+    //control
+    if(oscCon.includes("text")){
       console.log('get con :'+ oscCon);
       oscSig.stage=oscCon.split(',')[1];
     }
@@ -129,5 +131,5 @@ io.on('connection', (socket) => {
 
 
 
-httpServer.listen(3000);
+httpServer.listen(80,"10.0.100.3");
 

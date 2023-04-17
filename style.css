@@ -1,25 +1,42 @@
 @font-face {
-    font-family: 'TimesNewArialGX';
-    src: url('./TimesNewArialGX.ttf') format('truetype-variations');
-  }
-
-  body {
+  font-family: "TimesNewArial";
+  src: url("./TimesNewArialGX.ttf") format("truetype-variations");
+}
+  
+* {
     --base-font-size: 16px;
     font-size: max(2.8lvh, var(--base-font-size));
-    line-height: 1.3em;
+    line-height: 2.4em;
     font-family: "TimesNewArial";
     font-variation-settings: "ital" -100, "srff" 10;
     text-rendering: optimizeLegibility;
     font-smooth: never;
     -webkit-font-smoothing: none;
   }
- 
-  *{
+
+*{
     margin: 0px;
     padding: 0px;
-  }
+}
 
-  
-  
-  
-    
+h2 {
+  font-size: 1.2em;
+  white-space: nowrap;
+}
+
+
+h2 span {
+  white-space: nowrap;
+  display: inline-block;
+}
+
+  #content h1::after,
+  #content h2::after {
+  content: "";
+  display: block;
+  height: 2px;
+  background-color: black;
+  margin-top: 5px;
+}
+
+

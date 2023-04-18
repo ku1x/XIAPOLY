@@ -1,13 +1,13 @@
 var data=[
     {
       id:0,
-      title:"Polytope XIA",
-      detail:"HFK"
+      title:"Starting soon...",
+      detail:"Playlist"
     }
     ,
     {
       id:1,
-      title:"Polytope",
+      title:"Polytope XIa",
       detail:"Iannis Xenakis"
     }
     ,
@@ -25,7 +25,7 @@ var data=[
     ,
     {
       id:4,
-      title:"Polytope",
+      title:"Polytope XIa",
       detail:"Iannis Xenakis"
     }
     ,

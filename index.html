@@ -1,146 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Polytope XIa</title>
   <meta name="viewport" content="width=device-width">
-  <!--<link rel="stylesheet" type="text/css" href="style.css"> -->
-  <style>
- 
-
-*{
-    margin: 0px;
-    padding: 0px;
-}
-
-h2 {
-  font-size: 1.2em;
-  white-space: nowrap;
-}
-
-
-h2 span {
-  white-space: nowrap;
-  display: inline-block;
-}
-
-  #content h1::after,
-  #content h2::after {
-  content: "";
-  display: block;
-  height: 2px;
-  background-color: black;
-  margin-top: 5px;
-}
-
-
-  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-  <div id="bg" style="height: 100vh; width: 100vw">
-  <div id="content">
-    <h2>Polytope XIa</h2>
-    <h2> <span id="title">title</span></h2>
-      <h2> <span id="artist">artist</span></h2>
-        <h2> <span id="status">Disconnected</span></h2>
-        <!-- <h2>Messages:</h2>
-        <ul id="messages"></ul> -->
+  <div id="bg">
+    <div id="overlay" class="overlay-visible"></div>
+    <div id="content">
+      <h2>Polytope XIa</h2>
+      <h2> <span id="title">HFK-Bremen</span></h2>
+      <h2> <span id="artist">Playlist</span></h2>
+      <div id="playlist">
+        <ul>
+          <li id="li1">21:00 Polytope XIa (24:26)</li>
+          <li id="li2">21:32 Insomniac popping boba poetry (8:00)</li>
+          <li id="li3">21:43 Order (11:44)</li>
+          <li id="li4">22:00 Polytope XIa (24:26)</li>
+          <li id="li5">22:32 Stranger Things (3:47)</li>
+          <li id="li6">22:39 Cosmic Cells (3:38)</li>
+          <li id="li7">22:46 Probability (12:56)</li>
+        </ul>
+      </div>
+    </div>
   </div>
-  <div class="footer">
-    <div class="zigzag"></div>
-  </div>
-  </div>
-  
 </body>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const status = document.getElementById('status');
-    const messages = document.getElementById('messages');
-
-    
-    const title = document.querySelector("#title");
-    const artist = document.querySelector("#artist");
-    
-
-
-    const socket = io({
-      // Socket.IO options
-    });
-
-    socket.on('connect', () => {
-      status.innerText = 'Connected';
-      //appendMessage(`status: connected`);
-    });
-  /*
-    socket.on('connect_error', (err) => {
-      appendMessage(`event: connect_error | reason: ${err.message}`);
-    });
-
-    socket.on('disconnect', (reason) => {
-      status.innerText = 'Disconnected';
-      appendMessage(`event: disconnect | reason: ${reason}`);
-    }); */
+<script src="/socket.io/socket.io.js"></script>
+<script>
 
 
 
+  const title = document.querySelector("#title");
+  const artist = document.querySelector("#artist");
 
-    let time = 1000;
-    var color = 'white' ;
-    let intervalTime ;
-    let currentTime = intervalTime;
-    const bg = document.getElementById('bg');
-    bg.style.backgroundColor = color;
-    let t;
-    let isBgBlack = false;
-    
-    const blink = () => { // 修改intervalTime的初始值
-      bg.style.backgroundColor = 'black';
+
+
+  const socket = io({
+    // Socket.IO options
+  });
+
+  socket.on('connect', () => {
+  });
+
+
+
+  let time = 5000;
+  var color = "white";
+  var playNum = 0;
+  let prevPlayNum = playNum;
+  let intervalTime;
+  let currentTime = intervalTime;
+  const bg = document.getElementById('bg');
+  let overlay = document.getElementById('overlay');
+  bg.style.backgroundColor = color;
+  let t;
+  let isOverlayVisible = false;
+
+  const blink = () => {
+
+    //playNum=0, no blinking
+    if (playNum == 0) {
       clearInterval(t);
-      isBgBlack = true;
-      t = setInterval(() => {
-        if (isBgBlack) {
-          bg.style.backgroundColor = color;
-        } else {
-          bg.style.backgroundColor = 'black';
-        }
-        isBgBlack = !isBgBlack;
-        console.log(currentTime/2);
-        console.log(color);
-      }, currentTime/2); 
-      setTimeout(() => {
-        clearInterval(t);
-        blink();
-        intervalTime = currentTime;
-        currentTime = time;
-      }, intervalTime);
+      return;
     }
 
-    
-    if(time==0){
-      bg.style.backgroundColor = 'black';
-    }else if(time>=5000){
-      bg.style.backgroundColor = 'white';
-    }else blink();
-    
+    overlay.classList.remove('overlay-hidden');
+    overlay.classList.add('overlay-visible');
 
-    socket.on('osc', (oscSig) => {
-      time = oscSig.intensity;
-      //color = oscSig.colour;
-    });
-    
-    setInterval(() => {
-      if (currentTime !== time) {
-        currentTime = time;
+    clearInterval(t);
+    isOverlayVisible = true;
+    t = setInterval(() => {
+      if (isOverlayVisible) {
+        overlay.classList.remove('overlay-visible');
+        overlay.classList.add('overlay-hidden');
+      } else {
+        overlay.classList.remove('overlay-hidden');
+        overlay.classList.add('overlay-visible');
       }
-    }, intervalTime);
-    
+      console.log(intervalTime);
+    }, currentTime / 2)
 
-    socket.on('text', (msg) => {
-      //const mytext = document.getElementById('mytext');
-      title.innerHTML = msg.title;
-      artist.textContent = msg.detail;
-    })
-  </script>
+    setTimeout(() => {
+      clearInterval(t)
+      blink();
+      intervalTime = currentTime;
+      currentTime = time;
+    }, intervalTime);
+    console.log(time);
+  };
+
+  setInterval(() => {
+    if (playNum !== prevPlayNum) {
+      prevPlayNum = playNum;
+      blink();
+    }
+  }, 100);
+
+  if (playNum != 0) {
+    blink();
+  }
+
+
+  listChange = (onNum) => {
+    for (i = 1; i <= 7; i++) {
+      let liOn = document.getElementById('li' + i);
+      if (i == onNum) {
+        liOn.classList.add('liOn');
+      } else {
+        liOn.classList.remove('liOn');
+      }
+    }
+  }
+
+
+
+  socket.on('osc', (oscSig) => {
+    time = oscSig.intensity * 5000 + 100;
+    color = oscSig.colour;
+    playNum = oscSig.stage;
+
+    listChange(playNum);
+  });
+
+
+
+
+
+  setInterval(() => {
+    if (currentTime !== time) {
+      currentTime = time;
+    }
+  }, intervalTime);
+
+
+  socket.on('text', (msg) => {
+
+    title.innerHTML = msg.title;
+    artist.textContent = msg.detail;
+  })
+
+
+  //nosleep
+  //You can use this a quick example to add a looped video with fake data to your page and prevent mobile device from sleep:
+
+  // Create the root video element
+  var video = document.createElement('video');
+  video.setAttribute('loop', '');
+  // Add some styles if needed
+  video.setAttribute('style', 'display:none;');
+
+  // A helper to add sources to video
+  function addSourceToVideo(element, type, dataURI) {
+    var source = document.createElement('source');
+    source.src = dataURI;
+    source.type = 'video/' + type;
+    element.appendChild(source);
+  }
+
+  // A helper to concat base64
+  var base64 = function (mimeType, base64) {
+    return 'data:' + mimeType + ';base64,' + base64;
+  };
+
+  // Add Fake sourced
+  addSourceToVideo(video, 'webm', base64('video/webm', 'GkXfo0AgQoaBAUL3gQFC8oEEQvOBCEKCQAR3ZWJtQoeBAkKFgQIYU4BnQI0VSalmQCgq17FAAw9CQE2AQAZ3aGFtbXlXQUAGd2hhbW15RIlACECPQAAAAAAAFlSua0AxrkAu14EBY8WBAZyBACK1nEADdW5khkAFVl9WUDglhohAA1ZQOIOBAeBABrCBCLqBCB9DtnVAIueBAKNAHIEAAIAwAQCdASoIAAgAAUAmJaQAA3AA/vz0AAA='));
+  addSourceToVideo(video, 'mp4', base64('video/mp4', 'AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAAG21kYXQAAAGzABAHAAABthADAowdbb9/AAAC6W1vb3YAAABsbXZoZAAAAAB8JbCAfCWwgAAAA+gAAAAAAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIVdHJhawAAAFx0a2hkAAAAD3wlsIB8JbCAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAIAAAACAAAAAABsW1kaWEAAAAgbWRoZAAAAAB8JbCAfCWwgAAAA+gAAAAAVcQAAAAAAC1oZGxyAAAAAAAAAAB2aWRlAAAAAAAAAAAAAAAAVmlkZW9IYW5kbGVyAAAAAVxtaW5mAAAAFHZtaGQAAAABAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAAEcc3RibAAAALhzdHNkAAAAAAAAAAEAAACobXA0dgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAIAAgASAAAAEgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABj//wAAAFJlc2RzAAAAAANEAAEABDwgEQAAAAADDUAAAAAABS0AAAGwAQAAAbWJEwAAAQAAAAEgAMSNiB9FAEQBFGMAAAGyTGF2YzUyLjg3LjQGAQIAAAAYc3R0cwAAAAAAAAABAAAAAQAAAAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAEAAAABAAAAFHN0c3oAAAAAAAAAEwAAAAEAAAAUc3RjbwAAAAAAAAABAAAALAAAAGB1ZHRhAAAAWG1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAAK2lsc3QAAAAjqXRvbwAAABtkYXRhAAAAAQAAAABMYXZmNTIuNzguMw=='));
+
+  // Append the video to where ever you need
+  document.body.appendChild(video);
+
+  // Start playing video after any user interaction.
+  // NOTE: Running video.play() handler without a user action may be blocked by browser.
+  var playFn = function () {
+    video.play();
+    document.body.removeEventListener('touchend', playFn);
+  };
+  document.body.addEventListener('touchend', playFn);
+</script>
+
 </html>

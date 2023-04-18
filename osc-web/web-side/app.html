@@ -60,7 +60,7 @@ Received from an OSC app/device at : <div id="status"></div>
         console.log(msg);
         
             var httpRequest = new XMLHttpRequest();
-                    httpRequest.open("GET","http://localhost:3000/api5?time="+msg,true);
+                    httpRequest.open("GET","http://localhost:80/api5?time="+msg,true);
                     httpRequest.send();
     });
 
